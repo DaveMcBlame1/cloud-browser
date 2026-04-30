@@ -1,7 +1,7 @@
 # cloud-browser
 
 An interactive virtual browser environment that runs entirely inside **GitHub Codespaces**.  
-It spins up a lightweight XFCE desktop with Firefox ESR, served through noVNC so you can use
+It spins up a lightweight XFCE desktop with Firefox, served through noVNC so you can use
 it from any normal web browser — no local software needed.
 
 ---
@@ -14,7 +14,7 @@ it from any normal web browser — no local software needed.
 4. Find port **6080** labelled *"noVNC Desktop (Cloud Browser)"*.  
 5. Click **Open in Browser** (or the globe icon).  
 6. A noVNC page opens → click **Connect** → enter your VNC password (see below).  
-7. Firefox ESR is available inside the XFCE desktop.
+7. Firefox is available inside the XFCE desktop.
 
 ---
 
@@ -130,7 +130,7 @@ implications — anyone with the URL would be able to reach your desktop.
 ```
 Codespace container
 └── TigerVNC (:1, localhost:5901)
-      └── XFCE4 desktop + Firefox ESR
+      └── XFCE4 desktop + Firefox
 └── websockify / noVNC (localhost:6080 → 5901)
       └── Codespace port forwarding → your browser
 ```
@@ -139,7 +139,7 @@ Codespace container
 |-----------|---------|
 | `tigervnc-standalone-server` | X11 VNC server (display `:1`, port 5901) |
 | `xfce4` | Lightweight desktop environment |
-| `firefox-esr` | Web browser inside the desktop |
+| `firefox` | Web browser inside the desktop |
 | `novnc` + `websockify` | WebSocket proxy + HTML5 VNC client on port 6080 |
 
 ---

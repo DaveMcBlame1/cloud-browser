@@ -2,7 +2,20 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install desktop environment, VNC server, noVNC, and Firefox ESR
+# Add Mozilla's official apt repo so Firefox installs as a real .deb.
+# On Ubuntu 24.04 the default "firefox" package is a snap stub that does not
+# work inside containers, and "firefox-esr" is not in the Ubuntu repos at all.
+RUN apt-get update && apt-get install -y --no-install-recommends wget ca-certificates \
+  && install -d -m 0755 /etc/apt/keyrings \
+  && wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg \
+       -O /etc/apt/keyrings/packages.mozilla.org.asc \
+  && echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" \
+       > /etc/apt/sources.list.d/mozilla.list \
+  && printf 'Package: *\nPin: origin packages.mozilla.org\nPin-Priority: 1000\n' \
+       > /etc/apt/preferences.d/mozilla \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install desktop environment, VNC server, noVNC, and Firefox
 RUN apt-get update && apt-get install -y --no-install-recommends \
     xfce4 \
     xfce4-terminal \
@@ -12,7 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tigervnc-common \
     novnc \
     websockify \
-    firefox-esr \
+    firefox \
     xdg-utils \
     xfonts-base \
     x11-xserver-utils \
