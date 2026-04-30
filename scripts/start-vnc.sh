@@ -120,11 +120,12 @@ start_novnc() {
   # enabled. Without this, opening the port shows a bare directory listing and
   # the user has to manually navigate to vnc.html and click Connect.
   #
-  # In GitHub Codespaces the browser talks to a TLS proxy at
-  #   wss://<codespace-name>-6080.app.github.dev/
-  # so we must tell noVNC to use the page's own host, port 443, and TLS.
-  # We derive these at runtime from window.location so the same HTML works
-  # whether the user is on Codespaces or a plain HTTP forwarded port.
+  # We intentionally omit host/port/encrypt parameters so that noVNC derives
+  # them from window.location. This works correctly in both environments:
+  #   - GitHub Codespaces: wss://<codespace>-6080.app.github.dev/ (HTTPS proxy)
+  #   - Direct port-forward: ws://localhost:6080/ (plain HTTP)
+  # Explicitly passing port=443 can break the WebSocket URL construction through
+  # the Codespaces HTTPS proxy.
   cat > "${web_root}/index.html" <<'HTML'
 <!DOCTYPE html>
 <html>
@@ -133,18 +134,10 @@ start_novnc() {
     <title>Cloud Browser – connecting…</title>
     <script>
       (function () {
-        var loc = window.location;
-        // Use wss:// when the page is served over HTTPS (e.g. Codespaces proxy),
-        // otherwise fall back to plain ws:// (e.g. direct HTTP forward).
-        var encrypt = (loc.protocol === 'https:') ? '1' : '0';
-        var port    = (loc.protocol === 'https:') ? '443' : loc.port || '6080';
-        var params  = new URLSearchParams({
-          autoconnect:      'true',
-          reconnect:        'true',
-          reconnect_delay:  '2000',
-          host:             loc.hostname,
-          port:             port,
-          encrypt:          encrypt
+        var params = new URLSearchParams({
+          autoconnect:     'true',
+          reconnect:       'true',
+          reconnect_delay: '2000'
         });
         window.location.replace('vnc.html?' + params.toString());
       })();
