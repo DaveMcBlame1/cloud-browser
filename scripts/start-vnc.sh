@@ -116,6 +116,27 @@ start_novnc() {
     web_root="/opt/novnc"
   fi
 
+  # Create an index.html that auto-redirects to the noVNC UI with auto-connect
+  # enabled. Without this, opening the port shows a bare directory listing and
+  # the user has to manually navigate to vnc.html and click Connect.
+  cat > "${web_root}/index.html" <<'HTML'
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh"
+          content="0; url=vnc.html?autoconnect=true&reconnect=true&reconnect_delay=2000" />
+    <title>Cloud Browser</title>
+  </head>
+  <body>
+    <p>Connecting to desktop&hellip;
+      <a href="vnc.html?autoconnect=true&reconnect=true&reconnect_delay=2000">Click here</a>
+      if not redirected automatically.
+    </p>
+  </body>
+</html>
+HTML
+
   # Use nohup+& so the port is bound immediately and reliably without relying
   # on websockify's --daemon fork behaviour.
   nohup websockify \
