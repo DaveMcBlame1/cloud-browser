@@ -1,0 +1,23 @@
+{
+  "name": "Cloud Browser",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "vscode",
+  "postStartCommand": "bash ${containerWorkspaceFolder}/scripts/codespace-autostart.sh",
+  "portsAttributes": {
+    "6080": {
+      "label": "noVNC Desktop (Cloud Browser)",
+      "onAutoForward": "notify",
+      "visibility": "public",
+      "protocol": "http"
+    }
+  },
+  "forwardPorts": [6080],
+  "customizations": {
+    "vscode": {
+      "extensions": []
+    }
+  }
+}
