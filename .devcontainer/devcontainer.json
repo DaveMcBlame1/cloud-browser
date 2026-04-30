@@ -10,7 +10,7 @@
     "6080": {
       "label": "noVNC Desktop (Cloud Browser)",
       "onAutoForward": "notify",
-      "visibility": "private",
+      "visibility": "public",
       "protocol": "http"
     }
   },
